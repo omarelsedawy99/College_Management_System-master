@@ -1,0 +1,24 @@
+
+body
+{
+    font-family: 'segoe ui light';
+}
+.test
+{
+    width: 400px;
+    height: 400px;
+    border: solid 2px red;
+}
+#alertContainer
+{
+    display: none;
+}
+#Employee-form,#Student-form,#Professor-form
+{
+    display: none;
+}
+.nav-item
+{
+    text-align: center !important;
+    margin: auto !important;
+}

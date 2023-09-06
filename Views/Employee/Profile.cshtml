@@ -1,0 +1,260 @@
+﻿@{
+    Project.Models.Employee employee = ViewData["Employee"] as Project.Models.Employee;
+    ViewBag.Title = "Profile";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html class="" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="admin-themes-lab">
+    <meta name="author" content="themes-lab">
+    <script src="~/Assets/css/icons/font-awesome/font-awesome.js"></script>
+    <link rel="shortcut icon" href="~/Assets/images/favicon.png" type="image/png">
+    <title>@employee.User.FullName.Split(' ')[0]</title>
+    <link href="http://fonts.googleapis.com/css?family=Nothing+You+Could+Do" rel="stylesheet" type="text/css">
+    <link href="~/Assets/css/style.css" rel="stylesheet"> <!-- MANDATORY -->
+    <link href="~/Assets/css/theme.css" rel="stylesheet"> <!-- MANDATORY -->
+    <link href="~/Assets/css/ui.css" rel="stylesheet"> <!-- MANDATORY -->
+    <link href="~/Assets/plugins/datatables/dataTables.min.css" rel="stylesheet">
+    <script src="~/Assets/plugins/modernizr/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+</head>
+
+<body class="fixed-topbar color-default theme-sdtl submenu-hover">
+    <section style="opacity:1;">
+        <!-- BEGIN SIDEBAR -->
+        <div class="sidebar">
+            <div class="logopanel">
+            </div>
+            <div class="sidebar-inner">
+                <div class="sidebar-top big-img">
+                    <div class="user-image">
+                        @{
+                            if (employee.User.UserPicture == null)
+                            {
+                                <img src="~/Database/Images/user-avatar.png" class="img-responsive img-circle" style="height: 120px; width: 100%;">
+                            }
+                            else
+                            {
+                                <img src="@Url.Content(employee.User.UserPicture.Path)" class="img-responsive img-circle" style="height: 120px; width: 100%;">
+                            }
+                        }
+                    </div>
+                    <h4>@employee.User.FullName.Split(' ')[0]</h4>
+                </div>
+                <Br>
+                <ul class="nav nav-sidebar">
+                    <li class="tm nav-active"><a href="@Url.Action("Index", "Employee")"><i class="fas fa-archway" style="font-size:large;"></i><span>Home</span></a></li>
+                    <li class="tm nav-active">
+                        <a href="@Url.Action("Mail", "Employee")"><i class="fas fa-envelope" style="font-size:large;"></i><span>Mailbox</span> <span class="fa arrow"></span></a>
+                    </li>
+                </ul>
+                <div class="sidebar-widgets" style=""></div>
+                <div class="sidebar-footer clearfix" style="">
+                    <a class="pull-left toggle_fullscreen" href="#" data-rel="tooltip" data-placement="top" data-original-title="Fullscreen">
+                        <i class="icon-size-fullscreen"></i>
+                    </a>
+                    <a class="pull-left btn-effect" href="@Url.Action("Logout", "Home")" data-modal="modal-1" data-rel="tooltip" data-placement="top" data-original-title="Logout">
+                        <i class="icon-power"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- END SIDEBAR -->
+        <!-- BEGIN PAGE CONTENT -->
+        <div class="main-content" style="min-height:600px !important;">
+            <!-- BEGIN TOPBAR -->
+            <div class="topbar">
+                <div class="header-left" style="display: block;">
+                    <div class="topnav">
+                        <a class="menutoggle" href="#" data-toggle="sidebar-collapsed"><span class="menu__handle"><span>Menu</span></span></a>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <ul class="header-menu nav navbar-nav">
+                        <!-- BEGIN USER DROPDOWN -->
+                        <li class="dropdown" id="user-header">
+                            <a href="#" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                                <img src="~/Database/Images/user-avatar.png" alt="user image" style="height:62%;">
+                                <span class="username">Hi, @employee.User.FullName.Split(' ')[0]</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="@Url.Action("Profile", "Employee", new { id = employee.EmployeeID})"><i class="icon-settings"></i><span>Account Settings</span></a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Logout", "Home")"><i class="icon-logout"></i><span>Logout</span></a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- END USER DROPDOWN -->
+                    </ul>
+                </div>
+            </div>
+            <!-- END TOPBAR -->
+            <!-- Start inputs form -->
+            <div class="col-lg-6 col-lg-offset-3 m-t-100">
+                <form action="@Url.Action("Profile", "Employee")" method="post" enctype="multipart/form-data" class="form-horizontal form-group">
+
+                    <input type="hidden" name="EmployeeID" value="@employee.EmployeeID" />
+
+                    <div class="form-group">
+                        <span class="btn btn-default btn-file " style="width:100%;text-align:center;">
+                            <input id="profileImg" type="file" name="profileImg" onchange="UploadImg()">
+                            <span class="fileinput-new">Change image...</span>
+                        </span>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default btn-file " style="width:100%;text-align:center;" onclick="DeleteImg()">Delete image...</button>
+                        <input name="deleteImg" id="deleteImg" type="hidden" value="false" />
+                    </div><br />
+
+                    <div class="form-group">
+                        <label for="ssn">SSN:</label>
+                        <input class="form-control inputClass" id="ssn" value="@employee.User.SSN" disabled>
+                    </div><Br>
+
+                    <div class="form-group">
+                        <label for="fullName">Full name:</label>
+                        <input class="form-control inputClass" id="fullName" value="@employee.User.FullName" disabled>
+                    </div><Br>
+
+                    <div class="form-group">
+                        <label for="gender">Gender:</label>
+                        @{
+                            if (employee.User.Gender)
+                            {
+                                <input class="form-control inputClass" id="gender" value="Male" disabled>
+                            }
+                            else
+                            {
+                                <input class="form-control inputClass" id="gender" value="Female" disabled>
+                            }
+                        }
+                    </div><Br>
+
+                    <div class="form-group">
+                        <label for="DOB">Date of birth:</label>
+                        @{
+                            string birthdate;
+                            if (employee.User.BirthDate.Month < 10)
+                            {
+                                if (employee.User.BirthDate.Day < 10)
+                                {
+                                    birthdate = employee.User.BirthDate.Year.ToString() + "-0" + employee.User.BirthDate.Month.ToString() + "-0" + employee.User.BirthDate.Day.ToString();
+                                }
+                                else
+                                {
+                                    birthdate = employee.User.BirthDate.Year.ToString() + "-0" + employee.User.BirthDate.Month.ToString() + "-" + employee.User.BirthDate.Day.ToString();
+                                }
+                            }
+                            else
+                            {
+                                if (employee.User.BirthDate.Day < 10)
+                                {
+                                    birthdate = employee.User.BirthDate.Year.ToString() + "-" + employee.User.BirthDate.Month.ToString() + "-0" + employee.User.BirthDate.Day.ToString();
+                                }
+                                else
+                                {
+                                    birthdate = employee.User.BirthDate.Year.ToString() + "-" + employee.User.BirthDate.Month.ToString() + "-" + employee.User.BirthDate.Day.ToString();
+                                }
+                            }
+                        }
+                        <input type="date" class="form-control inputClass" id="DOB" value="@birthdate" disabled>
+                    </div><Br>
+
+                    <div class="form-group">
+                        <label>Phone:</label>
+                        <input id="phone" name="User.Phone" class="form-control inputClass" value="@employee.User.Phone">
+                    </div><Br>
+
+                    <div class="form-group">
+                        <label>E-mail:</label>
+                        <input id="email" name="User.Email" class="form-control inputClass" value="@employee.User.Email">
+                    </div><Br>
+
+                    <div class="form-group">
+                        <label>Password:</label>
+                        <input id="password" name="User.Password" type="password" class="form-control inputClass" value="@employee.User.Password">
+                    </div><Br>
+
+                    <div class="form-group">
+                        <label>Street:</label>
+                        <input id="street" name="User.Street" class="form-control inputClass" value="@employee.User.Street">
+                    </div><Br>
+
+                    <div class="form-group">
+                        <label>City:</label>
+                        <input id="city" name="User.City" class="form-control inputClass" value="@employee.User.City">
+                    </div><Br>
+
+                    <div class="form-group">
+                        <label>Country:</label>
+                        <input id="country" name="User.Country" class="form-control inputClass" value="@employee.User.Country">
+                    </div><Br>
+
+                    <button type="button" class="btn btn-default" id="EditBtn" onClick="EditData()" style="width: 100%;">Edit</button>
+                    <button type="submit" class="btn btn-default" id="SaveBtn" style="width: 100%;visibility:hidden;">Save</button>
+                </form>
+            </div>
+            <!-- End inputs form -->
+        </div>
+    </section>
+
+    <script src="~/Assets/plugins/jquery/jquery-1.11.1.min.js"></script>
+    <script src="~/Scripts/Student/Profile.js"></script><!------------------------------------------------------------------------------------------------->
+    <script src="~/Assets/plugins/jquery/jquery-migrate-1.2.1.min.js"></script>
+    <script src="~/Assets/plugins/gsap/main-gsap.min.js"></script> <!-- HTML Animations -->
+    <script src="~/Assets/plugins/jquery-ui/jquery-ui-1.11.2.min.js"></script>
+    <script src="~/Assets/plugins/jquery-block-ui/jquery.blockUI.min.js"></script> <!-- simulate synchronous behavior when using AJAX -->
+    <script src="~/Assets/plugins/translate/jqueryTranslator.min.js"></script> <!-- Translate Plugin with JSON data -->
+    <script src="~/Assets/plugins/bootbox/bootbox.min.js"></script>
+    <script src="~/Assets/plugins/mcustom-scrollbar/jquery.mCustomScrollbar.concat.min.js"></script> <!-- Custom Scrollbar sidebar -->
+    <script src="~/Assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Assets/plugins/bootstrap-dropdown/bootstrap-hover-dropdown.min.js"></script> <!-- Show Dropdown on Mouseover -->
+    <script src="~/Assets/plugins/bootstrap-progressbar/bootstrap-progressbar.min.js"></script> <!-- Animated Progress Bar -->
+    <script src="~/Assets/plugins/switchery/switchery.min.js"></script> <!-- IOS Switch -->
+    <script src="~/Assets/plugins/charts-sparkline/sparkline.min.js"></script> <!-- Charts Sparkline -->
+    <script src="~/Assets/plugins/retina/retina.min.js"></script>  <!-- Retina Display -->
+    <script src="~/Assets/plugins/jquery-cookies/jquery.cookies.js"></script> <!-- Jquery Cookies, for theme -->
+    <script src="~/Assets/plugins/bootstrap/js/jasny-bootstrap.min.js"></script> <!-- File Upload and Input Masks -->
+    <script src="~/Assets/plugins/select2/select2.min.js"></script> <!-- Select Inputs -->
+    <script src="~/Assets/plugins/bootstrap-tags-input/bootstrap-tagsinput.min.js"></script> <!-- Select Inputs -->
+    <script src="~/Assets/plugins/bootstrap-loading/lada.min.js"></script> <!-- Buttons Loading State -->
+    <script src="~/Assets/plugins/timepicker/jquery-ui-timepicker-addon.min.js"></script> <!-- Time Picker -->
+    <script src="~/Assets/plugins/multidatepicker/multidatespicker.min.js"></script> <!-- Multi dates Picker -->
+    <script src="~/Assets/plugins/colorpicker/spectrum.min.js"></script> <!-- Color Picker -->
+    <script src="~/Assets/plugins/touchspin/jquery.bootstrap-touchspin.min.js"></script> <!-- A mobile and touch friendly input spinner component for Bootstrap -->
+    <script src="~/Assets/plugins/autosize/autosize.min.js"></script> <!-- Textarea autoresize -->
+    <script src="~/Assets/plugins/icheck/icheck.min.js"></script> <!-- Icheck -->
+    <script src="~/Assets/plugins/bootstrap-editable/js/bootstrap-editable.min.js"></script> <!-- Inline Edition X-editable -->
+    <script src="~/Assets/plugins/bootstrap-context-menu/bootstrap-contextmenu.min.js"></script> <!-- File Upload and Input Masks -->
+    <script src="~/Assets/plugins/prettify/prettify.min.js"></script> <!-- Show html code -->
+    <script src="~/Assets/plugins/slick/slick.min.js"></script> <!-- Slider -->
+    <script src="~/Assets/plugins/countup/countUp.min.js"></script> <!-- Animated Counter Number -->
+    <script src="~/Assets/plugins/noty/jquery.noty.packaged.min.js"></script>  <!-- Notifications -->
+    <script src="~/Assets/plugins/backstretch/backstretch.min.js"></script> <!-- Background Image -->
+    <script src="~/Assets/plugins/charts-chartjs/Chart.min.js"></script>  <!-- ChartJS Chart -->
+    <script src="~/Assets/plugins/bootstrap-slider/bootstrap-slider.js"></script> <!-- Bootstrap Input Slider -->
+    <script src="~/Assets/plugins/visible/jquery.visible.min.js"></script> <!-- Visible in Viewport -->
+    <script src="~/Assets/js/builder.js"></script>
+    <script src="~/Assets/js/sidebar_hover.js"></script>
+    <script src="~/Assets/js/application.js"></script> <!-- Main Application Script -->
+    <script src="~/Assets/js/plugins.js"></script> <!-- Main Plugin Initialization Script -->
+    <script src="~/Assets/js/widgets/notes.js"></script>
+    <script src="~/Assets/js/quickview.js"></script> <!-- Quickview Script -->
+    <script src="~/Assets/js/pages/search.js"></script> <!-- Search Script -->
+    <!-- BEGIN PAGE SCRIPTS -->
+    <script src="~/Assets/plugins/datatables/jquery.dataTables.min.js"></script> <!-- Tables Filtering, Sorting & Editing -->
+    <script src="~/Assets/plugins/summernote/summernote.js"></script>
+    <script src="~/Assets/plugins/skycons/skycons.js"></script>
+    <script src="~/Assets/plugins/simple-weather/jquery.simpleWeather.min.js"></script>
+    <script src="~/Assets/js/widgets/widget_weather.js"></script>
+    <script src="~/Assets/js/widgets/todo_list.js"></script>
+    <script src="~/Assets/js/student_profile.js"></script>
+    <!-- END PAGE SCRIPTS -->
+</body>
+</html>

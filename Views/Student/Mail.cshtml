@@ -1,0 +1,366 @@
+﻿@{
+    Project.Models.User user = Session["UserData"] as Project.Models.User;
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@user.FullName.Split(' ')[0]</title>
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="admin-themes-lab">
+    <meta name="author" content="themes-lab">
+    <script src="~/Assets/css/icons/font-awesome/font-awesome.js"></script>
+    <link rel="shortcut icon" href="~/Assets/images/favicon.png" type="image/png">
+    <link href="http://fonts.googleapis.com/css?family=Nothing+You+Could+Do" rel="stylesheet" type="text/css">
+    <link href="~/Assets/css/style.css" rel="stylesheet"> <!-- MANDATORY -->
+    <link href="~/Assets/css/theme.css" rel="stylesheet"> <!-- MANDATORY -->
+    <link href="~/Assets/css/ui.css" rel="stylesheet"> <!-- MANDATORY -->
+    <link href="~/Assets/plugins/datatables/dataTables.min.css" rel="stylesheet">
+    <script src="~/Assets/plugins/modernizr/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+
+    <link href="~/Content/Mail/w3.css" rel="stylesheet" type='text/css'>
+    <link href="~/Content/Mail/w2.css" rel="stylesheet" type='text/css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type='text/css'>
+    <style>
+        html, body, h1, h2, h3, h4, h5 {
+            font-family: "RobotoDraft", "Roboto", sans-serif;
+        }
+
+        .w3-bar-block .w3-bar-item {
+            padding: 3%;
+        }
+    </style>
+</head>
+<body>
+    <!-- BEGIN SIDEBAR -->
+    <div class="sidebar">
+        <div class="logopanel">
+        </div>
+        <div class="sidebar-inner">
+            <div class="sidebar-top big-img">
+                <div class="user-image">
+                    @{
+                        if (user.UserPicture == null)
+                        {
+                            <img src="~/Database/Images/user-avatar.png" class="img-responsive img-circle" style="height: 120px; width: 100%;">
+                        }
+                        else
+                        {
+                            <img src="@Url.Content(user.UserPicture.Path)" class="img-responsive img-circle" style="height: 120px; width: 100%;">
+                        }
+                    }
+                </div>
+                <h4>@user.FullName.Split(' ')[0]</h4>
+            </div>
+            <Br>
+            <ul class="nav nav-sidebar">
+                <li class="tm nav-active" style="width: 100%;"><a href="@Url.Action("Index", "Student")"><i class="fas fa-archway" style="font-size:large;"></i><span>Home</span></a></li>
+                <li class="tm nav-active"><a href="#"><i class="fas fa-book-open" style="font-size:large;"></i><span>Subjects</span></a></li>
+                <li class="tm nav-active"><a href="#"><i class="fas fa-calendar-alt" style="font-size:large;">&nbsp;</i><span>Timetable</span></a></li>
+                <li class="tm nav-active">
+                    <a href="@Url.Action("Mail", "Student")"><i class="fas fa-envelope" style="font-size:large;">&nbsp;</i><span>Mailbox</span> <span class="fa arrow"></span></a>
+                </li>
+            </ul>
+            <div class="sidebar-widgets" style=""></div>
+            <div class="sidebar-footer clearfix" style="">
+                <a class="pull-left toggle_fullscreen" href="#" data-rel="tooltip" data-placement="top" data-original-title="Fullscreen">
+                    <i class="icon-size-fullscreen"></i>
+                </a>
+                <a class="pull-left btn-effect" href="@Url.Action("Logout", "Home")" data-modal="modal-1" data-rel="tooltip" data-placement="top" data-original-title="Logout">
+                    <i class="icon-power"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- END SIDEBAR -->
+    <!-- BEGIN TOPBAR -->
+    <div class="topbar" style="width: 100%;">
+        <div class="header-left" style="display: block;">
+            <div class="topnav">
+                <a class="menutoggle" href="#" data-toggle="sidebar-collapsed"><span class="menu__handle"><span>Menu</span></span></a>
+            </div>
+        </div>
+        <div class="header-right">
+            <ul class="header-menu nav navbar-nav">
+                <!-- BEGIN USER DROPDOWN -->
+                <li class="dropdown" id="user-header">
+                    <a href="#" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                        <img src="~/Database/Images/user-avatar.png" alt="user image" style="height:62%;">
+                        <span class="username">Hi, @user.FullName.Split(' ')[0]</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="@Url.Action("Profile", "Student", new { id = user.Student.StudentID})"><i class="icon-settings"></i><span>Account Settings</span></a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Logout", "Home")"><i class="icon-logout"></i><span>Logout</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- END USER DROPDOWN -->
+            </ul>
+        </div>
+    </div>
+    <!-- END TOPBAR -->
+
+    <div class="col-10 offset-2" style="margin-left:16.5%;height: 100%;">
+        <!-- Side Navigation -->
+        <nav class="w3-sidebar w3-bar-block w3-collapse w3-white w3-animate-left w3-card" style="z-index:3;width:320px;" id="mySidebar">
+            <a href="javascript:void(0)" onclick="w3_close()" title="Close Sidemenu"
+               class="w3-bar-item w3-button w3-hide-large w3-large">Close <i class="fa fa-remove"></i></a>
+            <a href="javascript:void(0)" class="w3-bar-item w3-button w3-dark-grey w3-button w3-hover-black w3-left-align" onclick="document.getElementById('id01').style.display='inline-table'">New Message <i class="w3-padding fa fa-pencil"></i></a>
+            <a id="myBtn" onclick="myFunc('Demo1')" href="javascript:void(0)" class="w3-bar-item w3-button"><i class="fa fa-inbox w3-margin-right"></i>Inbox<i class="w3-margin-left fa fa-caret-down"></i></a>
+            <div id="Demo1" class="w3-hide w3-animate-left">
+                @{
+                    int i = 0;
+                    foreach (var mail in user.ReceivedMails)
+                    {
+                        var id = "Mail" + i.ToString();
+                        if (i != 0)
+                        {
+                            <a href="javascript:void(0)" class="w3-bar-item w3-button w3-border-bottom test w3-hover-light-grey" onclick="openMail('@id');w3_close();">
+                                <div class="w3-container">
+                                    @{
+                                        string[] fullName = mail.Sender.FullName.Split(' ');
+                                        <span class="w3-opacity w3-large">From:&nbsp;@fullName[0]&nbsp;@fullName[1]</span>
+                                    }
+                                </div>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="javascript:void(0)" class="w3-bar-item w3-button w3-border-bottom test w3-hover-light-grey" onclick="openMail('@id');w3_close();" id="firstTab">
+                                <div class="w3-container">
+                                    @{
+                                        string[] fullName = mail.Sender.FullName.Split(' ');
+                                        <span class="w3-opacity w3-large">From:&nbsp;@fullName[0]&nbsp;@fullName[1]</span>
+                                    }
+                                </div>
+                            </a>
+                        }
+                        i++;
+                    }
+
+                }
+            </div>
+            <!--<a href="#" class="w3-bar-item w3-button"><i class="fa fa-paper-plane w3-margin-right"></i>Sent</a>-->
+            <a id="myBtn" onclick="myFunc('Demo2')" href="javascript:void(0)" class="w3-bar-item w3-button"><i class="fa fa-paper-plane w3-margin-right"></i>Sent<i class="w3-margin-left fa fa-caret-down"></i></a>
+            <div id="Demo2" class="w3-hide w3-animate-left">
+                @{
+                    foreach (var mail in user.SendedMails)
+                    {
+                        var id = "Mail" + i.ToString();
+                        if (i != 0)
+                        {
+                            <a href="javascript:void(0)" class="w3-bar-item w3-button w3-border-bottom test w3-hover-light-grey" onclick="openMail('@id');w3_close();">
+                                <div class="w3-container">
+                                    @{
+                                        string[] fullName = mail.Receiver.FullName.Split(' ');
+                                        <span class="w3-opacity w3-large">To:&nbsp;@fullName[0]&nbsp;@fullName[1]</span>
+                                    }
+                                </div>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="javascript:void(0)" class="w3-bar-item w3-button w3-border-bottom test w3-hover-light-grey" onclick="openMail('@id');w3_close();">
+                                <div class="w3-container">
+                                    @{
+                                        string[] fullName = mail.Receiver.FullName.Split(' ');
+                                        <span class="w3-opacity w3-large">To:&nbsp;@fullName[0]&nbsp;@fullName[1]</span>
+                                    }
+                                </div>
+                            </a>
+                        }
+                        i++;
+                    }
+
+                }
+            </div>
+            <!--<a href="#" class="w3-bar-item w3-button"><i class="fa fa-hourglass-end w3-margin-right"></i>Drafts</a>
+        <a href="#" class="w3-bar-item w3-button"><i class="fa fa-trash w3-marghin-right">&nbsp;&nbsp;&nbsp;&nbsp;</i>Trash</a>-->
+        </nav>
+
+        <!-- Modal that pops up when you click on "New Message" -->
+        <div id="id01" class="w3-modal" style="padding-top: 3%; z-index: 4; position: absolute; ">
+            <div class="w3-modal-content w3-animate-zoom">
+                <div class="w3-container w3-padding w3-red">
+                    <span onclick="document.getElementById('id01').style.display='none'" class="w3-button w3-right w3-xxlarge"><i class="fa fa-remove"></i></span>
+                    <h2>Send Mail</h2>
+                </div>
+                <div class="w3-panel">
+                    <form action="@Url.Action("Mail", "Student")" method="post">
+                        <label>To</label>
+                        <input id="receiverID" name="ReceiverEmail" class="w3-input w3-border w3-margin-bottom"><!--Receiver-->
+                        <input type="hidden" name="SenderID" value="@user.UserId" />
+                        <label>Subject</label>
+                        <input id="MailSubject" name="MailSubject" class="w3-input w3-border w3-margin-bottom"><!--Subject-->
+                        <input id="MailMessage" name="MailMessage" class="w3-input w3-border w3-margin-bottom" style="height:150px" placeholder="What's on your mind?"><!--Massege-->
+                        <div class="w3-section">
+                            <a class="w3-button w3-red" onclick="CancelBtn()">Cancel  <i class="fa fa-remove"></i></a>
+                            <button type="submit" class="w3-button w3-right" onclick="SendBtn()">Send  <i class="fa fa-paper-plane"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overlay effect when opening the side navigation on small screens -->
+        <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="Close Sidemenu" id="myOverlay"></div>
+
+        <!-- Page content -->
+        @{
+            i = 0;
+            foreach (var mail in user.ReceivedMails)
+            {
+                var id = "Mail" + i;
+                <div class="w3-main" style="margin-left:320px;">
+                    <i class="fa fa-bars w3-button w3-white w3-hide-large w3-xlarge w3-margin-top" onclick="w3_open()"></i>
+                    <a href="javascript:void(0)" class="w3-hide-large w3-red w3-button w3-right w3-margin-top w3-margin-right" onclick="document.getElementById('id01').style.display='block'"><i class="fa fa-pencil"></i></a>
+
+                    <div id="@id" class="w3-container person">
+                        <br>
+                        <h5 class="w3-opacity">Subject: @mail.MailSubject</h5>
+                        <h4><i class="fa fa-clock-o"></i> From @mail.Sender.FullName, @mail.DateTime.ToString("F")</h4>
+                        <!--
+                        <a class="w3-button" href="#">Reply<i class="w3-padding fa fa-mail-reply"></i></a>
+                        <a class="w3-button" href="#">Forward<i class="w3-padding fa fa-arrow-right"></i></a>
+                        -->
+                        <hr>
+                        <p>
+                            @mail.MailMessage
+                        </p>
+                    </div>
+                </div>
+                i++;
+            }
+        }
+
+        @{
+            foreach (var mail in user.SendedMails)
+            {
+                var id = "Mail" + i;
+                <div class="w3-main" style="margin-left:320px;">
+                    <i class="fa fa-bars w3-button w3-white w3-hide-large w3-xlarge w3-margin-top" onclick="w3_open()"></i>
+                    <a href="javascript:void(0)" class="w3-hide-large w3-red w3-button w3-right w3-margin-top w3-margin-right" onclick="document.getElementById('id01').style.display='block'"><i class="fa fa-pencil"></i></a>
+
+                    <div id="@id" class="w3-container person">
+                        <br>
+                        <h5 class="w3-opacity">Subject: @mail.MailSubject</h5>
+                        <h4><i class="fa fa-clock-o"></i> To @mail.Receiver.FullName, @mail.DateTime.ToString("F")</h4>
+                        <!--
+                        <a class="w3-button" href="#">Reply<i class="w3-padding fa fa-mail-reply"></i></a>
+                        <a class="w3-button" href="#">Forward<i class="w3-padding fa fa-arrow-right"></i></a>
+                        -->
+                        <hr>
+                        <p>
+                            @mail.MailMessage
+                        </p>
+                    </div>
+                </div>
+                i++;
+            }
+        }
+    </div>
+
+    <script src="~/Assets/plugins/jquery/jquery-1.11.1.min.js"></script>
+    <script src="~/Assets/plugins/jquery/jquery-migrate-1.2.1.min.js"></script>
+    <script src="~/Assets/plugins/gsap/main-gsap.min.js"></script> <!-- HTML Animations -->
+    <script src="~/Assets/plugins/jquery-ui/jquery-ui-1.11.2.min.js"></script>
+    <script src="~/Assets/plugins/jquery-block-ui/jquery.blockUI.min.js"></script> <!-- simulate synchronous behavior when using AJAX -->
+    <script src="~/Assets/plugins/bootbox/bootbox.min.js"></script>
+    <script src="~/Assets/plugins/mcustom-scrollbar/jquery.mCustomScrollbar.concat.min.js"></script> <!-- Custom Scrollbar sidebar -->
+    <script src="~/Assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Assets/plugins/bootstrap-dropdown/bootstrap-hover-dropdown.min.js"></script> <!-- Show Dropdown on Mouseover -->
+    <script src="~/Assets/plugins/bootstrap-progressbar/bootstrap-progressbar.min.js"></script> <!-- Animated Progress Bar -->
+    <script src="~/Assets/plugins/switchery/switchery.min.js"></script> <!-- IOS Switch -->
+    <script src="~/Assets/plugins/charts-sparkline/sparkline.min.js"></script> <!-- Charts Sparkline -->
+    <script src="~/Assets/plugins/retina/retina.min.js"></script>  <!-- Retina Display -->
+    <script src="~/Assets/plugins/jquery-cookies/jquery.cookies.js"></script> <!-- Jquery Cookies, for theme -->
+    <script src="~/Assets/plugins/bootstrap/js/jasny-bootstrap.min.js"></script> <!-- File Upload and Input Masks -->
+    <script src="~/Assets/plugins/select2/select2.min.js"></script> <!-- Select Inputs -->
+    <script src="~/Assets/plugins/bootstrap-tags-input/bootstrap-tagsinput.min.js"></script> <!-- Select Inputs -->
+    <script src="~/Assets/plugins/bootstrap-loading/lada.min.js"></script> <!-- Buttons Loading State -->
+    <script src="~/Assets/plugins/timepicker/jquery-ui-timepicker-addon.min.js"></script> <!-- Time Picker -->
+    <script src="~/Assets/plugins/multidatepicker/multidatespicker.min.js"></script> <!-- Multi dates Picker -->
+    <script src="~/Assets/plugins/colorpicker/spectrum.min.js"></script> <!-- Color Picker -->
+    <script src="~/Assets/plugins/touchspin/jquery.bootstrap-touchspin.min.js"></script> <!-- A mobile and touch friendly input spinner component for Bootstrap -->
+    <script src="~/Assets/plugins/autosize/autosize.min.js"></script> <!-- Textarea autoresize -->
+    <script src="~/Assets/plugins/icheck/icheck.min.js"></script> <!-- Icheck -->
+    <script src="~/Assets/plugins/bootstrap-editable/js/bootstrap-editable.min.js"></script> <!-- Inline Edition X-editable -->
+    <script src="~/Assets/plugins/bootstrap-context-menu/bootstrap-contextmenu.min.js"></script> <!-- File Upload and Input Masks -->
+    <script src="~/Assets/plugins/prettify/prettify.min.js"></script> <!-- Show html code -->
+    <script src="~/Assets/plugins/slick/slick.min.js"></script> <!-- Slider -->
+    <script src="~/Assets/plugins/countup/countUp.min.js"></script> <!-- Animated Counter Number -->
+    <script src="~/Assets/plugins/noty/jquery.noty.packaged.min.js"></script>  <!-- Notifications -->
+    <script src="~/Assets/plugins/backstretch/backstretch.min.js"></script> <!-- Background Image -->
+    <script src="~/Assets/plugins/charts-chartjs/Chart.min.js"></script>  <!-- ChartJS Chart -->
+    <script src="~/Assets/plugins/bootstrap-slider/bootstrap-slider.js"></script> <!-- Bootstrap Input Slider -->
+    <script src="~/Assets/plugins/visible/jquery.visible.min.js"></script> <!-- Visible in Viewport -->
+    <script src="~/Assets/js/builder.js"></script>
+    <script src="~/Assets/js/sidebar_hover.js"></script>
+    <script src="~/Assets/js/application.js"></script> <!-- Main Application Script -->
+    <script src="~/Assets/js/plugins.js"></script> <!-- Main Plugin Initialization Script -->
+    <script src="~/Assets/js/widgets/notes.js"></script>
+    <script src="~/Assets/js/quickview.js"></script> <!-- Quickview Script -->
+    <script src="~/Assets/js/pages/search.js"></script> <!-- Search Script -->
+    <!-- BEGIN PAGE SCRIPTS -->
+    <script src="~/Assets/plugins/datatables/jquery.dataTables.min.js"></script> <!-- Tables Filtering, Sorting & Editing -->
+    <script src="~/Assets/plugins/summernote/summernote.js"></script>
+    <script src="~/Assets/plugins/skycons/skycons.js"></script>
+    <script src="~/Assets/plugins/simple-weather/jquery.simpleWeather.min.js"></script>
+    <script src="~/Assets/js/widgets/widget_weather.js"></script>
+    <script src="~/Assets/js/widgets/todo_list.js"></script>
+    <script src="~/Assets/js/student_profile.js"></script>
+    <!-- END PAGE SCRIPTS -->
+    <script src="~/Scripts/Mail/Mail.js"></script>
+    <script>
+        var openInbox = document.getElementById("myBtn");
+        openInbox.click();
+
+        function w3_open() {
+            document.getElementById("mySidebar").style.display = "block";
+            document.getElementById("myOverlay").style.display = "block";
+        }
+
+        function w3_close() {
+            document.getElementById("mySidebar").style.display = "none";
+            document.getElementById("myOverlay").style.display = "none";
+        }
+
+        function myFunc(id) {
+            var x = document.getElementById(id);
+            if (x.className.indexOf("w3-show") == -1) {
+                x.className += " w3-show";
+                x.previousElementSibling.className += " w3-red";
+            } else {
+                x.className = x.className.replace(" w3-show", "");
+                x.previousElementSibling.className = x.previousElementSibling.className.replace(" w3-red", "");
+            }
+        }
+
+        openMail("Mail0")
+        function openMail(personName) {
+            var i;
+            var x = document.getElementsByClassName("person");
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+            }
+            x = document.getElementsByClassName("test");
+            for (i = 0; i < x.length; i++) {
+                x[i].className = x[i].className.replace(" w3-light-grey", "");
+            }
+            document.getElementById(personName).style.display = "block";
+            event.currentTarget.className += " w3-light-grey";
+        }
+    </script>
+    <script>
+        var openTab = document.getElementById("firstTab");
+        openTab.click();
+    </script>
+</body>
+</html>
